@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cider Products</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.sort-arrow {
+    margin-left: 5px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    color: #007BFF;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    background-color: #f2f2f2;
+}
+
+a {
+    color: inherit; /* blue colors for links too */
+    text-decoration: inherit; /* no underline */
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark-mode th,
+body.dark-mode td {
+    background-color: #232323;
+    color: #fff;
+}
+
+/* Additional specificity for th elements in dark mode */
+body.dark-mode th {
+    background-color: #1f1f1f;
+    color: #fff;
+}
+  </style>
+</head>
+<body>
+
+  <h1>UK Cider Charts</h1>
+  <button onclick="toggleDarkMode()" style="background-color: #1f1f1f;">Toggle Dark Mode</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sortTable('product_name')" data-column="product_name">Product Name<span class="sort-arrow">&#9650;&#9660;</span></th>
+        <th onclick="sortTable('alcohol_content')" data-column="alcohol_content">Alcohol Content (%)<span class="sort-arrow">&#9650;&#9660;</span></th>
+        <th onclick="sortTable('ml_of_drink')" data-column="ml_of_drink">Volume (ml)<span class="sort-arrow">&#9650;&#9660;</span></th>
+        <th onclick="sortTable('total_alcohol_content_all_bottles')" data-column="total_alcohol_content_all_bottles">Total Alcohol Content (all bottles)<span class="sort-arrow">&#9650;&#9660;</span></th>
+        <th onclick="sortTable('price.value')" data-column="price.value">Price (£)<span class="sort-arrow">&#9650;&#9660;</span></th>
+        <th onclick="sortTable('ranking')" data-column="ranking">Ranking<span class="sort-arrow">&#9650;&#9660;</span></th>
+        <th onclick="sortTable('place')" data-column="place">Place<span class="sort-arrow">&#9650;&#9660;</span></th>
+      </tr>
+    </thead>
+    <tbody id="productTableBody">
+      <!-- Product data will be inserted here dynamically -->
+    </tbody>
+  </table>
+
+  <ul class="pagination" id="pagination"></ul>
+
+  <script>
+    async function loadData() {
+      try {
+        const response = await fetch('https://corsproxy.org/?https://www.jsonkeeper.com/b/EDVC');
+        const jsonData = await response.json();
+        return jsonData;
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    let data;
+    const itemsPerPage = 10;
+    let currentSortColumn = '';
+    let isAscending = true;
+
+    function displayData(page) {
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const slicedData = data.slice(startIndex, endIndex);
+
+      const tableBody = document.getElementById('productTableBody');
+      tableBody.innerHTML = '';
+
+      slicedData.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
+          <td>${item.alcohol_content}</td>
+          <td>${item.ml_of_drink}</td>
+          <td>${item.total_alcohol_content_all_bottles}</td>
+          <td>${item.price.currency}${item.price.value}</td>
+          <td>${item.ranking}</td>
+          <td>${item.place}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function createPagination() {
+      const totalPages = Math.ceil(data.length / itemsPerPage);
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+
+      for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = i;
+        a.addEventListener('click', () => {
+          displayData(i);
+        });
+        li.appendChild(a);
+        pagination.appendChild(li);
+      }
+    }
+
+    function sortTable(column) {
+      if (currentSortColumn === column) {
+        isAscending = !isAscending;
+      } else {
+        currentSortColumn = column;
+        isAscending = true;
+      }
+
+      updateSortArrows(column, isAscending);
+
+      data.sort((a, b) => {
+        const valueA = getValue(a, column);
+        const valueB = getValue(b, column);
+
+        if (column === 'ranking') {
+          return isAscending ? valueA - valueB : valueB - valueA;
+        } else if (column === 'place') {
+          return isAscending ? comparePlace(valueA, valueB) : comparePlace(valueB, valueA);
+        } else {
+          return isAscending ? compareValues(valueA, valueB) : compareValues(valueB, valueA);
+        }
+      });
+
+      displayData(1);
+    }
+
+    function compareValues(valueA, valueB) {
+      // Compare values with handling for non-string types
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return valueA.localeCompare(valueB);
+      } else {
+        return valueA - valueB;
+      }
+    }
+
+    function comparePlace(a, b) {
+      // Extract numeric and non-numeric parts
+      const regex = /([0-9]+)([a-zA-Z]+)/;
+      const matchA = a.match(regex);
+      const matchB = b.match(regex);
+
+      if (matchA && matchB) {
+        // Compare numeric parts
+        const numericComparison = parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
+
+        // If numeric parts are equal, compare non-numeric parts
+        return numericComparison === 0 ? matchA[2].localeCompare(matchB[2]) : numericComparison;
+      } else {
+        // Fallback to string comparison if pattern not matched
+        return compareValues(a, b);
+      }
+    }
+
+    function getValue(obj, path) {
+      const keys = path.split('.');
+      return keys.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+    }
+
+    function truncateText(text, maxLength = 50) {
+      return text.length > maxLength ? text.slice(0, maxLength - 3) + '...' : text;
+    }
+
+    function updateSortArrows(column, isAscending) {
+      const arrowElements = document.querySelectorAll('.sort-arrow');
+      arrowElements.forEach(arrow => {
+        arrow.textContent = '';
+      });
+
+      const currentSortArrow = document.querySelector(`th[data-column="${column}"] .sort-arrow`);
+      currentSortArrow.textContent = isAscending ? '▲' : '▼';
+    }
+
+    async function initialize() {
+      data = await loadData();
+      displayData(1);
+      createPagination();
+    }
+      function toggleDarkMode() {
+      const body = document.body;
+      body.classList.toggle('dark-mode');
+
+      // Save user's preference in local storage
+      const isDarkMode = body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+    }
+
+    function applyStoredDarkMode() {
+      // Apply dark mode from local storage if set
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+      }
+    }
+
+    applyStoredDarkMode();
+    initialize();
+
+    initialize();
+  </script>
+
+</body>
+</html>
