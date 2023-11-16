@@ -54,7 +54,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background-color: #fff; /* Added background color */
+            background-color: #fff;
         }
 
         th {
@@ -95,7 +95,6 @@
             color: #fff;
         }
 
-        /* Dark mode styles */
         body.dark-mode {
             background-color: #343a40;
             color: #fff;
@@ -143,35 +142,33 @@
             background-color: #333333;
             color: #b5b5b5;
             margin-bottom: 1rem;
-            outline: none; /* Remove the default focus outline */
+            outline: none;
         }
 
         .search-input,
         .search-input:hover,
         .search-input:focus {
             margin-bottom: 1rem;
-            outline: none; /* Remove the default focus outline */
+            outline: none;
         }
 
         .container {
-            max-width: 90%; /* Adjust as needed */
-            margin: 0 auto; /* Center the container */
+            max-width: 90%;
+            margin: 0 auto;
         }
 
-        /* Make the table and its columns wider */
         .table-container {
-            overflow-x: auto; /* Enable horizontal scrolling if necessary */
+            overflow-x: auto;
         }
 
         .table-bordered th,
         .table-bordered td {
-            min-width: 150px; /* Adjust as needed */
-            text-align: center; /* Center align the text in the cells */
+            min-width: 150px;
+            text-align: center;
         }
 
-        /* Optionally, make the search input wider */
         .search-input {
-            width: 100%; /* Take up the full width of the container */
+            width: 100%;
         }
 
 
@@ -449,7 +446,6 @@
     }
 
     function comparePlace(a, b) {
-        // Extract numeric and non-numeric parts
         const regex = /([0-9]+)([a-zA-Z]+)/;
         const matchA = a.match(regex);
         const matchB = b.match(regex);
