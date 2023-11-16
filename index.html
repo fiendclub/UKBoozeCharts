@@ -42,7 +42,6 @@
         }
 
         table {
-            width: 100%;
             border-collapse: collapse;
             background-color: #fff;
             box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
@@ -55,12 +54,12 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background-color: #fff;
+            background-color: #fff; /* Added background color */
         }
 
         th {
             background-color: #007BFF;
-            color: #000000;
+            color: black;
             cursor: pointer;
         }
 
@@ -96,6 +95,7 @@
             color: #fff;
         }
 
+        /* Dark mode styles */
         body.dark-mode {
             background-color: #343a40;
             color: #fff;
@@ -132,24 +132,114 @@
             color: #acacac !important;
         }
 
+
+        .dropdown-menu {
+            background-color: #cfcfcf !important;
+        }
+
+        .dark-mode .search-input,
+        .dark-mode .search-input:hover,
+        .dark-mode .search-input:focus {
+            background-color: #333333;
+            color: #b5b5b5;
+            margin-bottom: 1rem;
+            outline: none; /* Remove the default focus outline */
+        }
+
+        .search-input,
+        .search-input:hover,
+        .search-input:focus {
+            margin-bottom: 1rem;
+            outline: none; /* Remove the default focus outline */
+        }
+
+        .container {
+            max-width: 90%; /* Adjust as needed */
+            margin: 0 auto; /* Center the container */
+        }
+
+        /* Make the table and its columns wider */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling if necessary */
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            min-width: 150px; /* Adjust as needed */
+            text-align: center; /* Center align the text in the cells */
+        }
+
+        /* Optionally, make the search input wider */
+        .search-input {
+            width: 100%; /* Take up the full width of the container */
+        }
+
+
     </style>
 </head>
 
 <body>
+
 
 <div class="container">
     <h1 class="display-4" style="padding-top: 5rem; margin-bottom: -0.5rem;">UK Booze Charts</h1>
     <p style="font-weight: bold; font-size: 30px;">Get wasted for cheap!</p>
 
     <div class="button-container">
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/EDVC')">Cider</button>
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ')">Beer</button>
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/SECG')">Vodka</button>
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/ICI3')">Gin</button>
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/1TB0')">Rum</button>
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/JFBI')">Wine</button>
-        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/VHN6')">Whiskey</button>
-        <button class="btn toggle-dark-mode" style="background-color: #45a771; color: #141414; font-weight: bold;" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/EDVC')">
+            Cider
+        </button>
+        <div class="btn-group">
+            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                Beer
+            </button>
+            <div class="dropdown-menu">
+                <button class="dropdown-item"
+                        onclick="loadBeerData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ', 'All Beers')">
+                    All Beers
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item"
+                        onclick="loadBeerData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ', 'Lager')">
+                    Lager
+                </button>
+                <button class="dropdown-item"
+                        onclick="loadBeerData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ', 'Ale')">Ale
+                </button>
+                <button class="dropdown-item"
+                        onclick="loadBeerData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ', 'Stout')">
+                    Stout
+                </button>
+                <button class="dropdown-item"
+                        onclick="loadBeerData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ', 'Craft')">
+                    Craft
+                </button>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/SECG')">
+            Vodka
+        </button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/ICI3')">
+            Gin
+        </button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/1TB0')">
+            Rum
+        </button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/JFBI')">
+            Wine
+        </button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/VHN6')">
+            Whiskey
+        </button>
+        <button class="btn toggle-dark-mode" style="background-color: #45a771; color: #141414; font-weight: bold;"
+                onclick="toggleDarkMode()">Toggle Dark Mode
+        </button>
+    </div>
+
+    <div class="form-group">
+        <label for="searchInput">Search:</label>
+        <input type="text" class="form-control search-input" id="searchInput" oninput="searchTable()">
     </div>
 
     <div class="table-container">
@@ -182,33 +272,97 @@
 </div>
 
 <script>
-  async function loadData(url) {
-    try {
-      const response = await fetch(url);
-      const jsonData = await response.json();
+    async function loadData(url) {
+        try {
 
-      // Use a Set to track unique product names
-      const uniqueProductNames = new Set();
+            document.getElementById('searchInput').value = "";
+            const response = await fetch(url);
+            const jsonData = await response.json();
 
-      // Filter out items with duplicate product names
-      const filteredData = jsonData.filter(item => {
-        if (!uniqueProductNames.has(item.product_name)) {
-          uniqueProductNames.add(item.product_name);
-          return true;
+            const uniqueProductNames = new Set();
+
+            const filteredData = jsonData.filter(item => {
+                if (!uniqueProductNames.has(item.product_name)) {
+                    uniqueProductNames.add(item.product_name);
+                    return true;
+                }
+                return false;
+            });
+
+            data = filteredData;
+            displayData(1);
+            createPagination();
+
+            return data;
+        } catch (error) {
+            console.error('Error loading data:', error);
+            return [];
         }
-        return false;
-      });
-
-      data = filteredData;
-      displayData(1);
-      createPagination();
-
-      return data;
-    } catch (error) {
-      console.error('Error loading data:', error);
-      return [];
     }
-  }
+
+    async function loadBeerData(url, categoryFilter) {
+        try {
+
+            document.getElementById('searchInput').value = "";
+            const response = await fetch(url);
+            const jsonData = await response.json();
+
+            let filteredData;
+
+            if (categoryFilter === "All Beers") {
+                filteredData = jsonData;
+            } else if (categoryFilter === "Craft") {
+                filteredData = jsonData.filter(item => {
+                    if (!item.product_name.toLowerCase().includes("stout")) {
+                        return (
+                            item.product_name.toLowerCase().includes(categoryFilter.toLowerCase()) ||
+                            item.product_name.toLowerCase().includes("ipa") ||
+                            item.product_name.toLowerCase().includes("brewdog") ||
+                            item.product_name.toLowerCase().includes("mixed pack")
+                        );
+                    }
+                });
+            } else {
+                filteredData = jsonData.filter(item => {
+                    if (!item.product_name.toLowerCase().includes("brewdog")) {
+                        return item.product_name.toLowerCase().includes(categoryFilter.toLowerCase());
+                    }
+                });
+            }
+
+            filteredData.sort((a, b) => b.ranking - a.ranking);
+
+            filteredData.forEach((item, index) => {
+                item.place = (index + 1) + 'th';
+            });
+
+            data = filteredData;
+            displayData(1);
+            createPagination();
+
+            return data;
+        } catch (error) {
+            console.error('Error loading data:', error);
+            return [];
+        }
+    }
+
+    function searchTable() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+        const filteredData = data.filter(item => {
+            return Object.values(item).some(value => {
+                if (typeof value === 'string' && value.toLowerCase().includes(searchInput)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        displayData(1, filteredData);
+        createPagination();
+    }
+
     function clearAll() {
         data = [];
     }
@@ -219,33 +373,34 @@
     let isAscending = true;
     let uniqueProductNames = new Set();
 
-    function displayData(page) {
+    function displayData(page, filteredData = data) {
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        const slicedData = data.slice(startIndex, endIndex);
+        const slicedData = filteredData.slice(startIndex, endIndex);
 
         const tableBody = document.getElementById('productTableBody');
         tableBody.innerHTML = '';
 
         slicedData.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-      <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
-      <td>${item.alcohol_content}</td>
-      <td>${item.ml_of_drink}</td>
-      <td>${item.total_alcohol_content_all_bottles}</td>
-      <td>${item.price.currency}${item.price.value}</td>
-      <td>${item.ranking}</td>
-      <td>${item.place}</td>
-    `;
-                tableBody.appendChild(row);
-        })
+            const row = document.createElement('tr');
+            row.innerHTML = `
+          <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
+          <td>${item.alcohol_content}</td>
+          <td>${item.ml_of_drink}</td>
+          <td>${item.total_alcohol_content_all_bottles}</td>
+          <td>${item.price.currency}${item.price.value}</td>
+          <td>${item.ranking}</td>
+          <td>${item.place}</td>
+        `;
+            tableBody.appendChild(row);
+        });
     }
 
     function createPagination() {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         const pagination = document.getElementById('pagination');
         pagination.innerHTML = '';
+
         for (let i = 1; i <= totalPages; i++) {
             const li = document.createElement('li');
             const a = document.createElement('a');
@@ -272,6 +427,7 @@
         data.sort((a, b) => {
             const valueA = getValue(a, column);
             const valueB = getValue(b, column);
+
             if (column === 'ranking') {
                 return isAscending ? valueA - valueB : valueB - valueA;
             } else if (column === 'place') {
@@ -285,7 +441,6 @@
     }
 
     function compareValues(valueA, valueB) {
-        // Compare values with handling for non-string types
         if (typeof valueA === 'string' && typeof valueB === 'string') {
             return valueA.localeCompare(valueB);
         } else {
@@ -294,9 +449,11 @@
     }
 
     function comparePlace(a, b) {
+        // Extract numeric and non-numeric parts
         const regex = /([0-9]+)([a-zA-Z]+)/;
         const matchA = a.match(regex);
         const matchB = b.match(regex);
+
         if (matchA && matchB) {
             const numericComparison = parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
             return numericComparison === 0 ? matchA[2].localeCompare(matchB[2]) : numericComparison;
@@ -333,12 +490,8 @@
     function toggleDarkMode() {
         const body = document.body;
         body.classList.toggle('dark-mode');
-
-        // Save user's preference in local storage
         const isDarkMode = body.classList.contains('dark-mode');
         localStorage.setItem('darkMode', isDarkMode);
-
-        // Toggle dark-mode class for table-bordered elements
         const tableBorderedElements = document.querySelectorAll('.table-container .table-bordered');
         tableBorderedElements.forEach(element => {
             element.classList.toggle('dark-mode-table-bordered', isDarkMode);
