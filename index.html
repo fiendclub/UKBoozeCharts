@@ -1,274 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cider Products</title>
-  <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    transition: background-color 0.3s, color 0.3s;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Booze Charts</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
+        h1 {
+            font-size: 2.5rem;
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
 
-table, th, td {
-    border: 1px solid #ddd;
-}
+        .button-container {
+            margin-bottom: 20px;
+        }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    position: relative;
-}
+        .button-container button {
+            margin-right: 10px;
+        }
 
-th {
-    background-color: #f2f2f2;
-}
+        .toggle-dark-mode {
+            background-color: #007BFF;
+            color: #fff;
+        }
 
-.sort-arrow {
-    margin-left: 5px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
+        .toggle-dark-mode:hover {
+            background-color: #0056b3;
+        }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 0;
-}
+        .table-container {
+            margin-bottom: 20px;
+        }
 
-.pagination li {
-    margin: 0 5px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-.pagination a {
-    text-decoration: none;
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    color: #007BFF;
-    border-radius: 5px;
-}
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: #fff; /* Added background color */
+        }
 
-.pagination a:hover {
-    background-color: #f2f2f2;
-}
+        th {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
 
-a {
-    color: inherit; /* blue colors for links too */
-    text-decoration: inherit; /* no underline */
-}
+        th:hover {
+            background-color: #0056b3;
+        }
 
-/* Dark mode styles */
-body.dark-mode {
-    background-color: #333;
-    color: #fff;
-}
+        .sort-arrow {
+            margin-left: 5px;
+        }
 
-body.dark-mode th,
-body.dark-mode td {
-    background-color: #232323;
-    color: #fff;
-}
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+        }
 
-/* Additional specificity for th elements in dark mode */
-body.dark-mode th {
-    background-color: #1f1f1f;
-    color: #fff;
-}
-  </style>
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #007BFF;
+            color: #007BFF;
+            border-radius: 5px;
+        }
+
+        .pagination a:hover {
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .table-container.dark-mode table {
+            background-color: #495057;
+            box-shadow: 0px 2px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .table-container.dark-mode th {
+            background-color: #212529;
+            color: #fff;
+        }
+
+        .table-container.dark-mode td {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .pagination.dark-mode a {
+            border: 1px solid #fff;
+            color: #fff;
+        }
+
+        .pagination.dark-mode a:hover {
+            background-color: #fff;
+            color: #343a40;
+        }
+
+        .dark-mode .dark-mode-table-bordered th,
+        .dark-mode .dark-mode-table-bordered td {
+            background-color: #2f2f2f !important;
+            color: #acacac !important;
+        }
+
+    </style>
 </head>
+
 <body>
 
-  <h1>UK Cider Charts</h1>
-  <button onclick="toggleDarkMode()" style="background-color: #1f1f1f;">Toggle Dark Mode</button>
+<div class="container">
+    <h1 class="display-4" style="padding-top: 5rem; margin-bottom: -0.5rem;">UK Booze Charts</h1>
+    <p style="font-weight: bold; font-size: 30px;">Get wasted for cheap!</p>
 
-  <table>
-    <thead>
-      <tr>
-        <th onclick="sortTable('product_name')" data-column="product_name">Product Name<span class="sort-arrow">&#9650;&#9660;</span></th>
-        <th onclick="sortTable('alcohol_content')" data-column="alcohol_content">Alcohol Content (%)<span class="sort-arrow">&#9650;&#9660;</span></th>
-        <th onclick="sortTable('ml_of_drink')" data-column="ml_of_drink">Volume (ml)<span class="sort-arrow">&#9650;&#9660;</span></th>
-        <th onclick="sortTable('total_alcohol_content_all_bottles')" data-column="total_alcohol_content_all_bottles">Total Alcohol Content (all bottles)<span class="sort-arrow">&#9650;&#9660;</span></th>
-        <th onclick="sortTable('price.value')" data-column="price.value">Price (£)<span class="sort-arrow">&#9650;&#9660;</span></th>
-        <th onclick="sortTable('ranking')" data-column="ranking">Ranking<span class="sort-arrow">&#9650;&#9660;</span></th>
-        <th onclick="sortTable('place')" data-column="place">Place<span class="sort-arrow">&#9650;&#9660;</span></th>
-      </tr>
-    </thead>
-    <tbody id="productTableBody">
-      <!-- Product data will be inserted here dynamically -->
-    </tbody>
-  </table>
+    <div class="button-container">
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/EDVC')">Cider</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/KTTQ')">Beer</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/SECG')">Vodka</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/ICI3')">Gin</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/1TB0')">Rum</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/JFBI')">Wine</button>
+        <button class="btn btn-primary" onclick="loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/VHN6')">Whiskey</button>
+        <button class="btn toggle-dark-mode" style="background-color: #45a771; color: #141414; font-weight: bold;" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    </div>
 
-  <ul class="pagination" id="pagination"></ul>
+    <div class="table-container">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th onclick="sortTable('product_name')" data-column="product_name">Product Name<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+                <th onclick="sortTable('alcohol_content')" data-column="alcohol_content">Alcohol Content (%)<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+                <th onclick="sortTable('ml_of_drink')" data-column="ml_of_drink">Volume (ml)<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+                <th onclick="sortTable('total_alcohol_content_all_bottles')"
+                    data-column="total_alcohol_content_all_bottles">Total Alcohol Content (all bottles)<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+                <th onclick="sortTable('price.value')" data-column="price.value">Price (£)<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+                <th onclick="sortTable('ranking')" data-column="ranking">Ranking<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+                <th onclick="sortTable('place')" data-column="place">Place<span
+                        class="sort-arrow">&#9650;&#9660;</span></th>
+            </tr>
+            </thead>
+            <tbody id="productTableBody">
+            <!-- Product data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
 
-  <script>
-    async function loadData() {
-      try {
-        const response = await fetch('https://corsproxy.org/?https://www.jsonkeeper.com/b/EDVC');
-        const jsonData = await response.json();
-        return jsonData;
-      } catch (error) {
-        console.error('Error loading data:', error);
-      }
+    <ul class="pagination" id="pagination"></ul>
+</div>
+
+<script>
+  async function loadData(url) {
+    try {
+      const response = await fetch(url);
+      const jsonData = await response.json();
+
+      // Use a Set to track unique product names
+      const uniqueProductNames = new Set();
+
+      // Filter out items with duplicate product names
+      const filteredData = jsonData.filter(item => {
+        if (!uniqueProductNames.has(item.product_name)) {
+          uniqueProductNames.add(item.product_name);
+          return true;
+        }
+        return false;
+      });
+
+      data = filteredData;
+      displayData(1);
+      createPagination();
+
+      return data; // Return the loaded and filtered data
+    } catch (error) {
+      console.error('Error loading data:', error);
+      return []; // Return an empty array in case of an error
+    }
+  }
+    function clearAll() {
+        data = [];
     }
 
     let data;
     const itemsPerPage = 10;
     let currentSortColumn = '';
     let isAscending = true;
+    let uniqueProductNames = new Set();
 
     function displayData(page) {
-      const startIndex = (page - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const slicedData = data.slice(startIndex, endIndex);
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const slicedData = data.slice(startIndex, endIndex);
 
-      const tableBody = document.getElementById('productTableBody');
-      tableBody.innerHTML = '';
+        const tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = '';
 
-      slicedData.forEach(item => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
-          <td>${item.alcohol_content}</td>
-          <td>${item.ml_of_drink}</td>
-          <td>${item.total_alcohol_content_all_bottles}</td>
-          <td>${item.price.currency}${item.price.value}</td>
-          <td>${item.ranking}</td>
-          <td>${item.place}</td>
-        `;
-        tableBody.appendChild(row);
-      });
+        slicedData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+      <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
+      <td>${item.alcohol_content}</td>
+      <td>${item.ml_of_drink}</td>
+      <td>${item.total_alcohol_content_all_bottles}</td>
+      <td>${item.price.currency}${item.price.value}</td>
+      <td>${item.ranking}</td>
+      <td>${item.place}</td>
+    `;
+                tableBody.appendChild(row);
+        })
     }
 
     function createPagination() {
-      const totalPages = Math.ceil(data.length / itemsPerPage);
-      const pagination = document.getElementById('pagination');
-      pagination.innerHTML = '';
+        const totalPages = Math.ceil(data.length / itemsPerPage);
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
 
-      for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = '#';
-        a.textContent = i;
-        a.addEventListener('click', () => {
-          displayData(i);
-        });
-        li.appendChild(a);
-        pagination.appendChild(li);
-      }
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = i;
+            a.addEventListener('click', () => {
+                displayData(i);
+            });
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
     }
 
     function sortTable(column) {
-      if (currentSortColumn === column) {
-        isAscending = !isAscending;
-      } else {
-        currentSortColumn = column;
-        isAscending = true;
-      }
-
-      updateSortArrows(column, isAscending);
-
-      data.sort((a, b) => {
-        const valueA = getValue(a, column);
-        const valueB = getValue(b, column);
-
-        if (column === 'ranking') {
-          return isAscending ? valueA - valueB : valueB - valueA;
-        } else if (column === 'place') {
-          return isAscending ? comparePlace(valueA, valueB) : comparePlace(valueB, valueA);
+        if (currentSortColumn === column) {
+            isAscending = !isAscending;
         } else {
-          return isAscending ? compareValues(valueA, valueB) : compareValues(valueB, valueA);
+            currentSortColumn = column;
+            isAscending = true;
         }
-      });
 
-      displayData(1);
+        updateSortArrows(column, isAscending);
+
+        data.sort((a, b) => {
+            const valueA = getValue(a, column);
+            const valueB = getValue(b, column);
+
+            if (column === 'ranking') {
+                return isAscending ? valueA - valueB : valueB - valueA;
+            } else if (column === 'place') {
+                return isAscending ? comparePlace(valueA, valueB) : comparePlace(valueB, valueA);
+            } else {
+                return isAscending ? compareValues(valueA, valueB) : compareValues(valueB, valueA);
+            }
+        });
+
+        displayData(1);
     }
 
     function compareValues(valueA, valueB) {
-      // Compare values with handling for non-string types
-      if (typeof valueA === 'string' && typeof valueB === 'string') {
-        return valueA.localeCompare(valueB);
-      } else {
-        return valueA - valueB;
-      }
+        // Compare values with handling for non-string types
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+            return valueA.localeCompare(valueB);
+        } else {
+            return valueA - valueB;
+        }
     }
 
     function comparePlace(a, b) {
-      // Extract numeric and non-numeric parts
-      const regex = /([0-9]+)([a-zA-Z]+)/;
-      const matchA = a.match(regex);
-      const matchB = b.match(regex);
+        // Extract numeric and non-numeric parts
+        const regex = /([0-9]+)([a-zA-Z]+)/;
+        const matchA = a.match(regex);
+        const matchB = b.match(regex);
 
-      if (matchA && matchB) {
-        // Compare numeric parts
-        const numericComparison = parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
+        if (matchA && matchB) {
+            // Compare numeric parts
+            const numericComparison = parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
 
-        // If numeric parts are equal, compare non-numeric parts
-        return numericComparison === 0 ? matchA[2].localeCompare(matchB[2]) : numericComparison;
-      } else {
-        // Fallback to string comparison if pattern not matched
-        return compareValues(a, b);
-      }
+            // If numeric parts are equal, compare non-numeric parts
+            return numericComparison === 0 ? matchA[2].localeCompare(matchB[2]) : numericComparison;
+        } else {
+            // Fallback to string comparison if pattern not matched
+            return compareValues(a, b);
+        }
     }
 
     function getValue(obj, path) {
-      const keys = path.split('.');
-      return keys.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+        const keys = path.split('.');
+        return keys.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
     }
 
     function truncateText(text, maxLength = 50) {
-      return text.length > maxLength ? text.slice(0, maxLength - 3) + '...' : text;
+        return text.length > maxLength ? text.slice(0, maxLength - 3) + '...' : text;
     }
 
     function updateSortArrows(column, isAscending) {
-      const arrowElements = document.querySelectorAll('.sort-arrow');
-      arrowElements.forEach(arrow => {
-        arrow.textContent = '';
-      });
+        const arrowElements = document.querySelectorAll('.sort-arrow');
+        arrowElements.forEach(arrow => {
+            arrow.textContent = '';
+        });
 
-      const currentSortArrow = document.querySelector(`th[data-column="${column}"] .sort-arrow`);
-      currentSortArrow.textContent = isAscending ? '▲' : '▼';
+        const currentSortArrow = document.querySelector(`th[data-column="${column}"] .sort-arrow`);
+        currentSortArrow.textContent = isAscending ? '▲' : '▼';
     }
 
     async function initialize() {
-      data = await loadData();
-      displayData(1);
-      createPagination();
+        data = await loadData('https://corsproxy.org/?https://www.jsonkeeper.com/b/EDVC');
+        displayData(1);
+        createPagination();
     }
-      function toggleDarkMode() {
-      const body = document.body;
-      body.classList.toggle('dark-mode');
 
-      // Save user's preference in local storage
-      const isDarkMode = body.classList.contains('dark-mode');
-      localStorage.setItem('darkMode', isDarkMode);
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+
+        // Save user's preference in local storage
+        const isDarkMode = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode);
+
+        // Toggle dark-mode class for table-bordered elements
+        const tableBorderedElements = document.querySelectorAll('.table-container .table-bordered');
+        tableBorderedElements.forEach(element => {
+            element.classList.toggle('dark-mode-table-bordered', isDarkMode);
+        });
     }
 
     function applyStoredDarkMode() {
-      // Apply dark mode from local storage if set
-      const isDarkMode = localStorage.getItem('darkMode') === 'true';
-      if (isDarkMode) {
-        document.body.classList.add('dark-mode');
-      }
+        // Apply dark mode from local storage if set
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            const tableBorderedElements = document.querySelectorAll('.table-container .table-bordered');
+            tableBorderedElements.forEach(element => {
+                element.classList.toggle('dark-mode-table-bordered', isDarkMode);
+            });
+        }
     }
 
     applyStoredDarkMode();
     initialize();
 
-    initialize();
-  </script>
+</script>
+
+<!-- Add Bootstrap JS and Popper.js scripts at the end of the body -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 
 </body>
 </html>
