@@ -54,7 +54,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background-color: #fff;
+            background-color: #fff; /* Added background color */
         }
 
         th {
@@ -95,6 +95,7 @@
             color: #fff;
         }
 
+        /* Dark mode styles */
         body.dark-mode {
             background-color: #343a40;
             color: #fff;
@@ -142,35 +143,46 @@
             background-color: #333333;
             color: #b5b5b5;
             margin-bottom: 1rem;
-            outline: none;
+            outline: none; /* Remove the default focus outline */
         }
 
         .search-input,
         .search-input:hover,
         .search-input:focus {
             margin-bottom: 1rem;
-            outline: none;
+            outline: none; /* Remove the default focus outline */
         }
 
         .container {
-            max-width: 90%;
-            margin: 0 auto;
+            max-width: 90%; /* Adjust as needed */
+            margin: 0 auto; /* Center the container */
         }
 
+        /* Make the table and its columns wider */
         .table-container {
-            overflow-x: auto;
+            overflow-x: auto; /* Enable horizontal scrolling if necessary */
         }
 
         .table-bordered th,
         .table-bordered td {
-            min-width: 150px;
-            text-align: center;
+            min-width: 150px; /* Adjust as needed */
+            text-align: center; /* Center align the text in the cells */
         }
 
+        /* Optionally, make the search input wider */
         .search-input {
-            width: 100%;
+            width: 100%; /* Take up the full width of the container */
         }
 
+        @media (max-width: 576px) {
+            .pagination {
+                flex-wrap: wrap;
+            }
+
+            .pagination li {
+                margin: 5px 0;
+            }
+        }
 
     </style>
 </head>
@@ -381,13 +393,13 @@
         slicedData.forEach(item => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                 <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
-                 <td>${item.alcohol_content}</td>
-                 <td>${item.ml_of_drink}</td>
-                 <td>${item.total_alcohol_content_all_bottles.toFixed(1)}</td>
-                 <td>${item.price.currency}${item.price.value}</td>
-                 <td>${item.ranking.toFixed(1)}</td>
-                 <td>${item.place}</td>
+<td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
+<td>${item.alcohol_content}</td>
+<td>${item.ml_of_drink}</td>
+<td>${item.total_alcohol_content_all_bottles.toFixed(1)}</td>
+<td>${item.price.currency}${item.price.value}</td>
+<td>${item.ranking.toFixed(1)}</td>
+<td>${item.place}</td>
         `;
             tableBody.appendChild(row);
         });
@@ -446,6 +458,7 @@
     }
 
     function comparePlace(a, b) {
+        // Extract numeric and non-numeric parts
         const regex = /([0-9]+)([a-zA-Z]+)/;
         const matchA = a.match(regex);
         const matchB = b.match(regex);
