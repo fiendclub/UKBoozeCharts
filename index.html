@@ -189,6 +189,11 @@
             }
         }
 
+        .pagination a.active {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
     </style>
 </head>
 
@@ -422,9 +427,23 @@
             a.textContent = i;
             a.addEventListener('click', () => {
                 displayData(i);
+                updateActivePage(i);
             });
             li.appendChild(a);
             pagination.appendChild(li);
+        }
+
+        // Updated function to update the active page
+        function updateActivePage(activePage) {
+            const paginationLinks = document.querySelectorAll('.pagination a');
+            paginationLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const activeLink = document.querySelector(`.pagination li:nth-child(${activePage}) a`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
         }
     }
 
