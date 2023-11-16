@@ -381,13 +381,13 @@
         slicedData.forEach(item => {
             const row = document.createElement('tr');
             row.innerHTML = `
-          <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
-          <td>${item.alcohol_content}</td>
-          <td>${item.ml_of_drink}</td>
-          <td>${item.total_alcohol_content_all_bottles}</td>
-          <td>${item.price.currency}${item.price.value}</td>
-          <td>${item.ranking}</td>
-          <td>${item.place}</td>
+                 <td><a href="https://www.amazon.co.uk${item.url}" target="_blank" style="text-decoration: none !important;">${truncateText(item.product_name)}</a></td>
+                 <td>${item.alcohol_content}</td>
+                 <td>${item.ml_of_drink}</td>
+                 <td>${item.total_alcohol_content_all_bottles.toFixed(1)}</td>
+                 <td>${item.price.currency}${item.price.value}</td>
+                 <td>${item.ranking.toFixed(1)}</td>
+                 <td>${item.place}</td>
         `;
             tableBody.appendChild(row);
         });
